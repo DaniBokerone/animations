@@ -3,6 +3,7 @@ package com.danielJuarez;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -15,6 +16,7 @@ public class Main extends ApplicationAdapter {
     private SpriteBatch batch;
     private Texture spriteSheet;
     private Texture background;
+    private Music backgroundMusic;
     private Animation<TextureRegion>[] isaacAnimations;
     private float stateTime;
     private float speed = 400f;
@@ -24,13 +26,18 @@ public class Main extends ApplicationAdapter {
 
     // Rectángulos para el joystick virtual
     Rectangle up, down, left, right;
-    final int DOWN = 0, LEFT = 1, RIGHT = 2, UP = 3, IDLE = 0;
+    final int DOWN = 0, LEFT = 1, RIGHT = 2, UP = 3, IDLE = 4;
 
     @Override
     public void create() {
         batch = new SpriteBatch();
         spriteSheet = new Texture(Gdx.files.internal("isaac.png"));
         background = new Texture(Gdx.files.internal("isaac_room.png"));
+
+        backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("background_music.mp3"));
+
+        backgroundMusic.setLooping(true);
+        backgroundMusic.play();
 
         int frameWidth = spriteSheet.getWidth() / 3;
         int frameHeight = spriteSheet.getHeight() / 4;
@@ -81,7 +88,6 @@ public class Main extends ApplicationAdapter {
             }
         }
 
-        if (direction < 0 || direction > 3) direction = DOWN;
 
         TextureRegion frame = isaacAnimations[direction].getKeyFrame(stateTime, true);
 
@@ -101,8 +107,6 @@ public class Main extends ApplicationAdapter {
 
                 touchPos.y = Gdx.graphics.getHeight() - touchPos.y;
 
-                System.out.println("Touch position: (" + touchPos.x + ", " + touchPos.y + ")");
-
                 if (up.contains(touchPos.x, touchPos.y)) return UP;
                 if (down.contains(touchPos.x, touchPos.y)) return DOWN;
                 if (left.contains(touchPos.x, touchPos.y)) return LEFT;
@@ -111,7 +115,6 @@ public class Main extends ApplicationAdapter {
         }
         return IDLE;
     }
-
 
     @Override
     public void dispose() {
